@@ -1,0 +1,76 @@
+name: Update Dashboard
+
+on:
+  # Manual trigger: Actions tab → Run workflow
+  workflow_dispatch:
+  # Auto: every hour at minute 7
+  schedule:
+    - cron: '7 * * * *'
+  # Auto: when this file or the generator changes
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/generate.py'
+      - '.github/workflows/refresh.yml'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: dashboard-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate dashboard
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: python scripts/generate.py
+
+      - name: Commit + push if changed
+        run: |
+          git config user.name "Mavis · fleet-bot"
+          git config user.email "fleet-bot@users.noreply.github.com"
+          if git diff --quiet index.html; then
+            echo "No changes — skipping commit"
+          else
+            git add index.html
+            TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            git commit -m "chore(dashboard): regenerate index.html [$TS]"
+            git push
+            echo "✅ Pushed update at $TS"
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+      - name: Report
+        if: always()
+        run: |
+          echo "## Dashboard Refresh" >> $GITHUB_STEP_SUMMARY
+          echo "- Time: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_STEP_SUMMARY
+          echo "- Pages URL: ${{ steps.deploy.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Trigger: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GitHub Fleet Dashboard · 拾光設計</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=ZCOOL+XiaoWei&family=Long+Cang&family=Special+Elite&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410; --paper: #f5efe1; --paper-2: #ebe2cd;
+  --gold: #b48a3a; --gold-dark: #8a6a2a; --red: #b83232; --red-dark: #8a2424;
+  --green: #4a6b3a; --line: #2a2018; --warn: #c08a2a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Noto Serif TC", "Songti TC", serif;
+  background: var(--paper); color: var(--ink);
+  line-height: 1.5; font-size: 14px;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 29px, rgba(180,138,58,0.05) 29px, rgba(180,138,58,0.05) 30px);
+}
+.wrap { max-width: 1400px; margin: 0 auto; padding: 32px 24px 80px; }
+
+.hdr {
+  border: 3px double var(--line); padding: 28px 32px 24px;
+  background: var(--paper-2); position: relative; margin-bottom: 28px;
+}
+.hdr::before, .hdr::after {
+  content: ""; position: absolute; width: 24px; height: 24px; border: 2px solid var(--line);
+}
+.hdr::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+.hdr::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+.hdr-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; }
+.hdr-left { flex: 1; min-width: 280px; }
+.brand-zh { font-family: "ZCOOL XiaoWei", serif; font-size: 14px; letter-spacing: 0.4em; color: var(--gold-dark); }
+.brand-en { font-family: "DM Serif Display", serif; font-size: 44px; line-height: 1; color: var(--ink); margin: 6px 0 4px; }
+.brand-en em { font-style: italic; color: var(--red); }
+.subtitle { font-family: "Special Elite", monospace; font-size: 13px; letter-spacing: 0.2em; color: var(--ink); opacity: 0.7; }
+.hdr-stamp {
+  display: inline-block; padding: 8px 16px;
+  border: 3px solid var(--red); color: var(--red);
+  font-family: "ZCOOL XiaoWei", serif; font-size: 18px; letter-spacing: 0.4em;
+  transform: rotate(-4deg); font-weight: 700; background: rgba(184,50,50,0.04);
+}
+.hdr-stamp::before { content: "✦"; margin-right: 6px; opacity: 0.6; }
+.hdr-stamp::after { content: "✦"; margin-left: 6px; opacity: 0.6; }
+.hdr-meta {
+  margin-top: 18px; padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  display: flex; gap: 24px; flex-wrap: wrap;
+  font-family: "Special Elite", monospace; font-size: 11px; letter-spacing: 0.15em;
+}
+.hdr-meta span { opacity: 0.7; }
+.hdr-meta strong { color: var(--red); font-weight: 700; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.stat { border: 2px solid var(--line); padding: 14px 16px; background: var(--paper-2); position: relative; }
+.stat::before { content: ""; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; background: var(--gold); }
+.stat-label { font-family: "Special Elite", monospace; font-size: 10px; letter-spacing: 0.2em; opacity: 0.6; text-transform: uppercase; }
+.stat-num { font-family: "DM Serif Display", serif; font-size: 36px; line-height: 1.1; margin: 4px 0 2px; }
+.stat-num em { font-style: italic; color: var(--red); }
+.stat-foot { font-size: 11px; opacity: 0.7; }
+.stat.done { background: linear-gradient(180deg, rgba(74,107,58,0.08), transparent); }
+.stat.done .stat-num { color: var(--green); }
+.stat.todo { background: linear-gradient(180deg, rgba(184,50,50,0.06), transparent); }
+.stat.todo .stat-num { color: var(--red); }
+
+.pbar-wrap { border: 2px solid var(--line); padding: 18px 20px; margin-bottom: 24px; background: var(--paper-2); }
+.pbar-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.pbar-title { font-family: "ZCOOL XiaoWei", serif; font-size: 16px; letter-spacing: 0.2em; }
+.pbar-pct { font-family: "DM Serif Display", serif; font-size: 32px; color: var(--red); }
+.pbar-pct small { font-size: 14px; color: var(--ink); opacity: 0.6; margin-left: 4px; }
+.pbar-track { height: 18px; border: 2px solid var(--line); background: var(--paper); position: relative; overflow: hidden; }
+.pbar-fill { height: 100%; background: repeating-linear-gradient(45deg, var(--red) 0 8px, var(--red-dark) 8px 16px); transition: width 0.6s ease; position: relative; }
+.pbar-fill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); }
+
+.refresh-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding: 12px 18px; border: 2px solid var(--line); background: var(--paper-2); }
+.refresh-info { font-family: "Special Elite", monospace; font-size: 11px; letter-spacing: 0.15em; opacity: 0.7; }
+.refresh-info code { background: var(--paper); padding: 2px 6px; border: 1px solid var(--line); font-family: "JetBrains Mono", monospace; }
+.refresh-btn {
+  display: inline-block; padding: 6px 14px;
+  border: 2px solid var(--red); color: var(--red);
+  font-family: "ZCOOL XiaoWei", serif; font-size: 13px; letter-spacing: 0.2em;
+  text-decoration: none; background: transparent; cursor: pointer;
+}
+.refresh-btn:hover { background: var(--red); color: var(--paper); }
+.refresh-btn::before { content: "🔄 "; }
+
+.filterbar { border: 2px solid var(--line); padding: 14px 18px; margin-bottom: 16px; background: var(--paper-2); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filterbar-label { font-family: "Special Elite", monospace; font-size: 11px; letter-spacing: 0.15em; opacity: 0.6; margin-right: 8px; }
+.fbtn { border: 1.5px solid var(--line); background: var(--paper); font-family: "Noto Serif TC", serif; font-size: 12px; padding: 4px 12px; cursor: pointer; letter-spacing: 0.05em; transition: all 0.15s; }
+.fbtn:hover { background: var(--gold); color: var(--paper); }
+.fbtn.active { background: var(--ink); color: var(--paper); }
+.fbtn .n { font-family: "JetBrains Mono", monospace; font-size: 10px; opacity: 0.7; margin-left: 4px; }
+
+.tbl-wrap { border: 3px double var(--line); background: var(--paper-2); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 1200px; }
+th { background: var(--ink); color: var(--paper); font-family: "ZCOOL XiaoWei", serif; font-weight: 400; font-size: 13px; letter-spacing: 0.15em; padding: 12px 8px; text-align: left; border-right: 1px solid var(--gold-dark); white-space: nowrap; }
+th:last-child { border-right: 0; }
+td { padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 13px; }
+tr:hover td { background: rgba(180,138,58,0.08); }
+tr.row-done td { opacity: 1; }
+tr.row-todo td { background: rgba(184,50,50,0.04); }
+
+.cell-mono { font-family: "JetBrains Mono", monospace; font-size: 11px; }
+.cell-name { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--ink); text-decoration: none; }
+.cell-name:hover { color: var(--red); text-decoration: underline; }
+.cell-cat { font-size: 13px; }
+.cell-purpose { max-width: 220px; font-size: 12px; }
+.cell-pain { font-size: 12px; max-width: 160px; font-style: italic; opacity: 0.85; }
+
+.tag { display: inline-block; padding: 2px 8px; font-family: "Special Elite", monospace; font-size: 10px; letter-spacing: 0.1em; border: 1.5px solid; }
+.tag-done { background: var(--green); color: var(--paper); border-color: var(--green); }
+.tag-todo { background: var(--paper); color: var(--red); border-color: var(--red); }
+.tag-partial { background: var(--warn); color: var(--paper); border-color: var(--warn); }
+
+.prog-cell { min-width: 110px; }
+.prog-row { display: flex; align-items: center; gap: 6px; }
+.prog-mini { flex: 1; height: 8px; border: 1.5px solid var(--line); background: var(--paper); position: relative; overflow: hidden; }
+.prog-mini-fill { height: 100%; background: var(--red); }
+.prog-pct { font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700; min-width: 36px; text-align: right; }
+.prog-pct.full { color: var(--green); }
+.prog-pct.zero { color: var(--red); opacity: 0.5; }
+.prog-pct.partial { color: var(--warn); }
+
+.ftr { margin-top: 32px; padding-top: 18px; border-top: 2px solid var(--line); text-align: center; font-family: "Special Elite", monospace; font-size: 11px; letter-spacing: 0.2em; opacity: 0.6; }
+.ftr-zh { font-family: "ZCOOL XiaoWei", serif; font-size: 14px; letter-spacing: 0.3em; opacity: 0.7; margin-bottom: 4px; }
+
+@media print { body { background: white; } .filterbar, .refresh-bar { display: none; } }
+@media (max-width: 768px) { .brand-en { font-size: 32px; } .wrap { padding: 16px 8px 60px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hdr">
+  <div class="hdr-row">
+    <div class="hdr-left">
+      <div class="brand-zh">拾 光 設 計  ／  T E N E T  S T U D I O</div>
+      <h1 class="brand-en">GitHub <em>Fleet</em> Dashboard</h1>
+      <div class="subtitle">86 · OPENCLAWSEAN024-CREATE · v3.0.2 SPRINT</div>
+    </div>
+    <div class="hdr-stamp">PR D · v 3.0.2</div>
+  </div>
+  <div class="hdr-meta">
+    <span>EST · <strong>2024</strong></span>
+    <span>GENERATED · <strong>2026-09-07 07:48</strong></span>
+    <span>SCOPE · <strong>86 REPOS</strong></span>
+    <span>RUN · <strong>Mavis · MiniMax-M3</strong></span>
+    <span>NEXT REFRESH · <strong>HOURLY + MANUAL</strong></span>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat done">
+    <div class="stat-label">DONE</div>
+    <div class="stat-num">77</div>
+    <div class="stat-foot">PRD/SPEC + GHA both present</div>
+  </div>
+  <div class="stat todo">
+    <div class="stat-label">IN FLIGHT</div>
+    <div class="stat-num">9</div>
+    <div class="stat-foot">background workers</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">TOTAL</div>
+    <div class="stat-num">86</div>
+    <div class="stat-foot">全部 GitHub repos</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">LANGUAGES</div>
+    <div class="stat-num">6</div>
+    <div class="stat-foot">TypeScript / HTML / JS / Python / CSS / Shell</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">CATEGORIES</div>
+    <div class="stat-num">15</div>
+    <div class="stat-foot">自動分類</div>
+  </div>
+  <div class="stat done">
+    <div class="stat-label">PAGES</div>
+    <div class="stat-num">32</div>
+    <div class="stat-foot">已啟用 GitHub Pages</div>
+  </div>
+</div>
+
+<div class="pbar-wrap">
+  <div class="pbar-head">
+    <div class="pbar-title">完 工 進 度 ／ SHIP PROGRESS</div>
+    <div class="pbar-pct">89.5<small>%</small></div>
+  </div>
+  <div class="pbar-track">
+    <div class="pbar-fill" style="width: 89.5%"></div>
+  </div>
+</div>
+
+<div class="refresh-bar">
+  <div class="refresh-info">
+    自動更新：每小時跑一次 GHA workflow · 手動觸發：<code>Actions → Update Dashboard → Run workflow</code>
+  </div>
+  <a class="refresh-btn" href="https://github.com/openclawsean024-create/fleet-dashboard/actions/workflows/refresh.yml" target="_blank" rel="noopener noreferrer">手動更新</a>
+</div>
+
+<div class="filterbar">
+  <span class="filterbar-label">FILTER  ／  分 類</span>
+  <button class="fbtn active" data-filter="all">全部<span class="n">86</span></button>
+  <button class="fbtn" data-filter="🤖 AI">🤖 AI<span class="n">20</span></button>
+  <button class="fbtn" data-filter="📦 其他">📦 其他<span class="n">17</span></button>
+  <button class="fbtn" data-filter="💬 社群">💬 社群<span class="n">10</span></button>
+  <button class="fbtn" data-filter="🛒 電商">🛒 電商<span class="n">9</span></button>
+  <button class="fbtn" data-filter="📊 財報">📊 財報<span class="n">5</span></button>
+  <button class="fbtn" data-filter="🔮 算命">🔮 算命<span class="n">4</span></button>
+  <button class="fbtn" data-filter="🎬 影音">🎬 影音<span class="n">3</span></button>
+  <button class="fbtn" data-filter="🍜 餐飲">🍜 餐飲<span class="n">3</span></button>
+  <button class="fbtn" data-filter="🏠 房地產">🏠 房地產<span class="n">3</span></button>
+  <button class="fbtn" data-filter="💼 CRM">💼 CRM<span class="n">2</span></button>
+  <button class="fbtn" data-filter="💊 健康">💊 健康<span class="n">2</span></button>
+  <button class="fbtn" data-filter="📝 內容">📝 內容<span class="n">2</span></button>
+  <button class="fbtn" data-filter="🏨 飯店">🏨 飯店<span class="n">2</span></button>
+  <button class="fbtn" data-filter="🛡️ 保險">🛡️ 保險<span class="n">2</span></button>
+  <button class="fbtn" data-filter="💭 論壇">💭 論壇<span class="n">2</span></button>
+  
+  <span class="filterbar-label" style="margin-left: 16px;">狀態</span>
+  <button class="fbtn active" data-status="all">All</button>
+  <button class="fbtn" data-status="done">✓ Done</button>
+  <button class="fbtn" data-status="todo">⋯ In Flight</button>
+</div>
+
+<div class="tbl-wrap">
+<table>
+<thead>
+<tr>
+  <th style="width: 86px;">建立</th>
+  <th style="width: 86px;">更新</th>
+  <th style="width: 180px;">GITHUB REPO</th>
+  <th style="width: 96px;">分類</th>
+  <th style="width: 200px;">專案名稱 / NAME</th>
+  <th>用途</th>
+  <th style="width: 150px;">解決痛點</th>
+  <th style="width: 72px;">進度</th>
+  <th style="width: 130px;">% 進度條</th>
+</tr>
+</thead>
+<tbody id="tbody">
+<tr class="row-todo" data-cat="🛒 電商" data-status="todo">
+  <td class="cell-mono">2026-09-06</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/fleet-dashboard" target="_blank" rel="noopener noreferrer">fleet-dashboard ↗</a></td>
+  <td class="cell-cat">🛒 電商</td>
+  <td><span class="cell-mono">fleet-dashboard</span></td>
+  <td class="cell-purpose">GitHub Fleet Dashboard · 85 repos v3.0.2 進度總覽 · 拾光設計</td>
+  <td class="cell-pain">收銀/庫存數位化</td>
+  <td><span class="tag tag-todo">⋯ IN FLIGHT</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 0%"></div></div>
+      <span class="prog-pct zero">0%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-partial" data-cat="🤖 AI" data-status="partial">
+  <td class="cell-mono">2026-05-06</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/life-protocol" target="_blank" rel="noopener noreferrer">life-protocol ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">life-protocol</span></td>
+  <td class="cell-purpose">Life Protocol 實踐應用 - AI 驅動的人生策略系統</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-partial">◐ PARTIAL</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 50%"></div></div>
+      <span class="prog-pct partial">50%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-todo" data-cat="💼 CRM" data-status="todo">
+  <td class="cell-mono">2026-08-25</td>
+  <td class="cell-mono">2026-09-05</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/beauty-crm-concierge" target="_blank" rel="noopener noreferrer">beauty-crm-concierge ↗</a></td>
+  <td class="cell-cat">💼 CRM</td>
+  <td><span class="cell-mono">beauty-crm-concierge</span></td>
+  <td class="cell-purpose">美業回訪管家 (BeautyFollow Concierge) — 高端美業客戶關懷 CRM。每次回訪都像被專屬照顧。</td>
+  <td class="cell-pain">客戶關懷自動化</td>
+  <td><span class="tag tag-todo">⋯ IN FLIGHT</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 0%"></div></div>
+      <span class="prog-pct zero">0%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-todo" data-cat="💬 社群" data-status="todo">
+  <td class="cell-mono">2026-08-08</td>
+  <td class="cell-mono">2026-09-05</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/comment-flow-yt" target="_blank" rel="noopener noreferrer">comment-flow-yt ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">comment-flow-yt</span></td>
+  <td class="cell-purpose">YouTube 留言抽籤小助手 — 純前端、無登入、可重現結果</td>
+  <td class="cell-pain">零成本/無痛起步</td>
+  <td><span class="tag tag-todo">⋯ IN FLIGHT</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 0%"></div></div>
+      <span class="prog-pct zero">0%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-partial" data-cat="🤖 AI" data-status="partial">
+  <td class="cell-mono">2026-08-16</td>
+  <td class="cell-mono">2026-09-05</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/lms-train" target="_blank" rel="noopener noreferrer">lms-train ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">lms-train</span></td>
+  <td class="cell-purpose">線上教育訓練系統 — 影片 + 考題 + 統計。非會員可用 MVP。</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-partial">◐ PARTIAL</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 50%"></div></div>
+      <span class="prog-pct partial">50%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-partial" data-cat="🤖 AI" data-status="partial">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-05</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/news-rap-automation" target="_blank" rel="noopener noreferrer">news-rap-automation ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">news-rap-automation</span></td>
+  <td class="cell-purpose">新聞 → Rap 自動化 v2.0 — 純前端 Boom Bap</td>
+  <td class="cell-pain">重複作業自動化</td>
+  <td><span class="tag tag-partial">◐ PARTIAL</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 50%"></div></div>
+      <span class="prog-pct partial">50%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-partial" data-cat="💬 社群" data-status="partial">
+  <td class="cell-mono">2026-04-30</td>
+  <td class="cell-mono">2026-09-05</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/social-comment-auto-reply" target="_blank" rel="noopener noreferrer">social-comment-auto-reply ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">social-comment-auto-reply</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">留言抽獎自動化</td>
+  <td><span class="tag tag-partial">◐ PARTIAL</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 50%"></div></div>
+      <span class="prog-pct partial">50%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-todo" data-cat="💬 社群" data-status="todo">
+  <td class="cell-mono">2026-04-12</td>
+  <td class="cell-mono">2026-09-05</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/social-comment-v2" target="_blank" rel="noopener noreferrer">social-comment-v2 ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">social-comment-v2</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">留言抽獎自動化</td>
+  <td><span class="tag tag-todo">⋯ IN FLIGHT</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 0%"></div></div>
+      <span class="prog-pct zero">0%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-todo" data-cat="🤖 AI" data-status="todo">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-05</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ugc-video-generator" target="_blank" rel="noopener noreferrer">ugc-video-generator ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">ugc-video-generator</span></td>
+  <td class="cell-purpose">UGC 影片生成器 v2.0 — 純前端、零 API Key 的 AI 主播短影片生成器</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-todo">⋯ IN FLIGHT</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 0%"></div></div>
+      <span class="prog-pct zero">0%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ai-employee-outsourcing" target="_blank" rel="noopener noreferrer">ai-employee-outsourcing ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">ai-employee-outsourcing</span></td>
+  <td class="cell-purpose">AI 員工外包平台 - 把重複性工作自動化為 AI Agent 服務</td>
+  <td class="cell-pain">重複作業自動化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-08-16</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ai-landing-specialist" target="_blank" rel="noopener noreferrer">ai-landing-specialist ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">ai-landing-specialist</span></td>
+  <td class="cell-purpose">AI 落地師 (AI Partner) — 為台灣中小企業導入 AI 自動化的官方網站。靜態 HTML/CSS/JS,部署於 Vercel。</td>
+  <td class="cell-pain">重複作業自動化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-03-20</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ai-team-intro" target="_blank" rel="noopener noreferrer">ai-team-intro ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">ai-team-intro</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-03-31</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/allfi-asset-manager" target="_blank" rel="noopener noreferrer">allfi-asset-manager ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">allfi-asset-manager</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-03-04</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/anime-character-analyzer" target="_blank" rel="noopener noreferrer">anime-character-analyzer ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">anime-character-analyzer</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-11</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/astrology-analyzer" target="_blank" rel="noopener noreferrer">astrology-analyzer ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">astrology-analyzer</span></td>
+  <td class="cell-purpose">AI SaaS 專案 — 第 6 輪 PRD 升級</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💼 CRM" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/beauty-crm" target="_blank" rel="noopener noreferrer">beauty-crm ↗</a></td>
+  <td class="cell-cat">💼 CRM</td>
+  <td><span class="cell-mono">beauty-crm</span></td>
+  <td class="cell-purpose">美業客戶長期管理 (Sean 開發)</td>
+  <td class="cell-pain">資料集中管理</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-03-03</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/business-card-manager" target="_blank" rel="noopener noreferrer">business-card-manager ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">business-card-manager</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">名片交換數位化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-07</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/business-card-pro" target="_blank" rel="noopener noreferrer">business-card-pro ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">business-card-pro</span></td>
+  <td class="cell-purpose">名片王 Pro — AI 名片管理 SaaS（Next.js 16 + Prisma + Auth.js v5 + Tesseract.js OCR）</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-05-18</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/claude-code-enterprise-training" target="_blank" rel="noopener noreferrer">claude-code-enterprise-training ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">claude-code-enterprise-training</span></td>
+  <td class="cell-purpose">中文 Claude Code 企業內訓 - Next.js Landing Page</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-11</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/claude-code-training" target="_blank" rel="noopener noreferrer">claude-code-training ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">claude-code-training</span></td>
+  <td class="cell-purpose">AI SaaS 專案 — 第 7 輪 PRD 補 §15</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💊 健康" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/clinic-booking" target="_blank" rel="noopener noreferrer">clinic-booking ↗</a></td>
+  <td class="cell-cat">💊 健康</td>
+  <td><span class="cell-mono">clinic-booking</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — clinic-booking</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💬 社群" data-status="done">
+  <td class="cell-mono">2026-08-15</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/comment-flow-web" target="_blank" rel="noopener noreferrer">comment-flow-web ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">comment-flow-web</span></td>
+  <td class="cell-purpose">Comment Flow — 純前端版 (FB JS SDK + GitHub Pages)</td>
+  <td class="cell-pain">留言抽獎自動化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/contract-reviewer" target="_blank" rel="noopener noreferrer">contract-reviewer ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">contract-reviewer</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — contract-reviewer</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛒 電商" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/contract-tracker" target="_blank" rel="noopener noreferrer">contract-tracker ↗</a></td>
+  <td class="cell-cat">🛒 電商</td>
+  <td><span class="cell-mono">contract-tracker</span></td>
+  <td class="cell-purpose">合約狀況 + 審核法條 (Sean 開發)</td>
+  <td class="cell-pain">合約審閱效率化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛒 電商" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/decoration-tracker" target="_blank" rel="noopener noreferrer">decoration-tracker ↗</a></td>
+  <td class="cell-cat">🛒 電商</td>
+  <td><span class="cell-mono">decoration-tracker</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — decoration-tracker</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-04-05</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/digital-nomad-cafe-map" target="_blank" rel="noopener noreferrer">digital-nomad-cafe-map ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">digital-nomad-cafe-map</span></td>
+  <td class="cell-purpose">Project digital-nomad-cafe-map</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-11</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ebook-audio" target="_blank" rel="noopener noreferrer">ebook-audio ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">ebook-audio</span></td>
+  <td class="cell-purpose">AI SaaS 專案 — 第 7 輪 PRD 補 §15</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🎬 影音" data-status="done">
+  <td class="cell-mono">2026-03-03</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ebook-to-audiobook" target="_blank" rel="noopener noreferrer">ebook-to-audiobook ↗</a></td>
+  <td class="cell-cat">🎬 影音</td>
+  <td><span class="cell-mono">ebook-to-audiobook</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ecom-list" target="_blank" rel="noopener noreferrer">ecom-list ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">ecom-list</span></td>
+  <td class="cell-purpose">電商多平台快速上架 (Sean 開發)</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ecom-uploader" target="_blank" rel="noopener noreferrer">ecom-uploader ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">ecom-uploader</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — ecom-uploader</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/elderly-care-companion" target="_blank" rel="noopener noreferrer">elderly-care-companion ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">elderly-care-companion</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — elderly-care-companion</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💊 健康" data-status="done">
+  <td class="cell-mono">2026-04-05</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/emed-glp1" target="_blank" rel="noopener noreferrer">emed-glp1 ↗</a></td>
+  <td class="cell-cat">💊 健康</td>
+  <td><span class="cell-mono">emed-glp1</span></td>
+  <td class="cell-purpose">Project emed-glp1</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📝 內容" data-status="done">
+  <td class="cell-mono">2026-08-08</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/eternal-article" target="_blank" rel="noopener noreferrer">eternal-article ↗</a></td>
+  <td class="cell-cat">📝 內容</td>
+  <td><span class="cell-mono">eternal-article</span></td>
+  <td class="cell-purpose">貼一篇文章,把它永久寫進區塊鏈。支援 Sui+Walrus / Arweave / Base+IPFS。</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💬 社群" data-status="done">
+  <td class="cell-mono">2026-03-20</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/facebook-comment-picker" target="_blank" rel="noopener noreferrer">facebook-comment-picker ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">facebook-comment-picker</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">留言抽獎自動化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🔮 算命" data-status="done">
+  <td class="cell-mono">2026-04-17</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/fate-match" target="_blank" rel="noopener noreferrer">fate-match ↗</a></td>
+  <td class="cell-cat">🔮 算命</td>
+  <td><span class="cell-mono">fate-match</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📊 財報" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/finance-radar" target="_blank" rel="noopener noreferrer">finance-radar ↗</a></td>
+  <td class="cell-cat">📊 財報</td>
+  <td><span class="cell-mono">finance-radar</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — finance-radar</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛒 電商" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/finance-tracker" target="_blank" rel="noopener noreferrer">finance-tracker ↗</a></td>
+  <td class="cell-cat">🛒 電商</td>
+  <td><span class="cell-mono">finance-tracker</span></td>
+  <td class="cell-purpose">公司財務報表 + 流動資產 (Sean 開發)</td>
+  <td class="cell-pain">財務報表視覺化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🔮 算命" data-status="done">
+  <td class="cell-mono">2026-04-17</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/fortune-telling" target="_blank" rel="noopener noreferrer">fortune-telling ↗</a></td>
+  <td class="cell-cat">🔮 算命</td>
+  <td><span class="cell-mono">fortune-telling</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">個人化命理諮詢</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🎬 影音" data-status="done">
+  <td class="cell-mono">2026-04-05</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/grow-therapy" target="_blank" rel="noopener noreferrer">grow-therapy ↗</a></td>
+  <td class="cell-cat">🎬 影音</td>
+  <td><span class="cell-mono">grow-therapy</span></td>
+  <td class="cell-purpose">Project grow-therapy</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-08-16</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/hermes-publisher" target="_blank" rel="noopener noreferrer">hermes-publisher ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">hermes-publisher</span></td>
+  <td class="cell-purpose">從 Claude Code / Codex / Hermes 一鍵把 SKILL.md 上架到 Capafy 販售。含 4 個 CLI 指令: check / </td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-17</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/Hermes_setting_20260718" target="_blank" rel="noopener noreferrer">Hermes_setting_20260718 ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">Hermes_setting_20260718</span></td>
+  <td class="cell-purpose">Hermes Agent 完整設定文件 + SOP + 32 個關鍵 skill + shell scripts (備份於 2026-07-18)</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🔮 算命" data-status="done">
+  <td class="cell-mono">2026-04-17</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/horoscope" target="_blank" rel="noopener noreferrer">horoscope ↗</a></td>
+  <td class="cell-cat">🔮 算命</td>
+  <td><span class="cell-mono">horoscope</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🏨 飯店" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/hotel-pm" target="_blank" rel="noopener noreferrer">hotel-pm ↗</a></td>
+  <td class="cell-cat">🏨 飯店</td>
+  <td><span class="cell-mono">hotel-pm</span></td>
+  <td class="cell-purpose">飯店 / 包租代管物業管理系統 — 純前端 SPA</td>
+  <td class="cell-pain">資料集中管理</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🏨 飯店" data-status="done">
+  <td class="cell-mono">2026-08-02</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/hotel-pm-pro" target="_blank" rel="noopener noreferrer">hotel-pm-pro ↗</a></td>
+  <td class="cell-cat">🏨 飯店</td>
+  <td><span class="cell-mono">hotel-pm-pro</span></td>
+  <td class="cell-purpose">hotel-pm commercial version</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛡️ 保險" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/insurance-claims" target="_blank" rel="noopener noreferrer">insurance-claims ↗</a></td>
+  <td class="cell-cat">🛡️ 保險</td>
+  <td><span class="cell-mono">insurance-claims</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — insurance-claims</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛡️ 保險" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/insurance-hub" target="_blank" rel="noopener noreferrer">insurance-hub ↗</a></td>
+  <td class="cell-cat">🛡️ 保險</td>
+  <td><span class="cell-mono">insurance-hub</span></td>
+  <td class="cell-purpose">保單資料集中管理 + 各家條款對比 + 理賠 SOP 透明化 + 台灣保險地圖</td>
+  <td class="cell-pain">資料集中管理</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/learning-radar" target="_blank" rel="noopener noreferrer">learning-radar ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">learning-radar</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — learning-radar</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛒 電商" data-status="done">
+  <td class="cell-mono">2026-03-03</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/meeting-recorder" target="_blank" rel="noopener noreferrer">meeting-recorder ↗</a></td>
+  <td class="cell-cat">🛒 電商</td>
+  <td><span class="cell-mono">meeting-recorder</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🔮 算命" data-status="done">
+  <td class="cell-mono">2026-04-17</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/numerology-analyzer" target="_blank" rel="noopener noreferrer">numerology-analyzer ↗</a></td>
+  <td class="cell-cat">🔮 算命</td>
+  <td><span class="cell-mono">numerology-analyzer</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-15</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/openclaw-minimax-skills" target="_blank" rel="noopener noreferrer">openclaw-minimax-skills ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">openclaw-minimax-skills</span></td>
+  <td class="cell-purpose">OpenClaw 一人公司 skill 集 — 給 MiniMax Agent 安裝並依此開發 SaaS / 網站</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💭 論壇" data-status="done">
+  <td class="cell-mono">2026-08-22</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/openptt" target="_blank" rel="noopener noreferrer">openptt ↗</a></td>
+  <td class="cell-cat">💭 論壇</td>
+  <td><span class="cell-mono">openptt</span></td>
+  <td class="cell-purpose">OpenPTT — 全平台 PTT 看板瀏覽器 (BePTT 100% Clone, Web + iOS + Android)</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛒 電商" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/order-tracker" target="_blank" rel="noopener noreferrer">order-tracker ↗</a></td>
+  <td class="cell-cat">🛒 電商</td>
+  <td><span class="cell-mono">order-tracker</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — order-tracker</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛒 電商" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/parcel-tracker" target="_blank" rel="noopener noreferrer">parcel-tracker ↗</a></td>
+  <td class="cell-cat">🛒 電商</td>
+  <td><span class="cell-mono">parcel-tracker</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — parcel-tracker</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🍜 餐飲" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/pos-multitrade" target="_blank" rel="noopener noreferrer">pos-multitrade ↗</a></td>
+  <td class="cell-cat">🍜 餐飲</td>
+  <td><span class="cell-mono">pos-multitrade</span></td>
+  <td class="cell-purpose">POS 系統（行業切換）— 純前端 SPA，支援餐飲/零售/服務三種行業模板，localStorage 持久化，零月費。</td>
+  <td class="cell-pain">收銀/庫存數位化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛒 電商" data-status="done">
+  <td class="cell-mono">2026-07-13</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/pos-system" target="_blank" rel="noopener noreferrer">pos-system ↗</a></td>
+  <td class="cell-cat">🛒 電商</td>
+  <td><span class="cell-mono">pos-system</span></td>
+  <td class="cell-purpose">POS 收銀管理系統 MVP - 全通路零售一站搞定</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💭 論壇" data-status="done">
+  <td class="cell-mono">2026-03-28</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ptt-alertor" target="_blank" rel="noopener noreferrer">ptt-alertor ↗</a></td>
+  <td class="cell-cat">💭 論壇</td>
+  <td><span class="cell-mono">ptt-alertor</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🛒 電商" data-status="done">
+  <td class="cell-mono">2026-03-04</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ptt-tracker" target="_blank" rel="noopener noreferrer">ptt-tracker ↗</a></td>
+  <td class="cell-cat">🛒 電商</td>
+  <td><span class="cell-mono">ptt-tracker</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-11</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/remove-bg" target="_blank" rel="noopener noreferrer">remove-bg ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">remove-bg</span></td>
+  <td class="cell-purpose">AI 自動去背服務 — 台灣最便宜的 AI 去背 SaaS</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🏠 房地產" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/rental-aggregator" target="_blank" rel="noopener noreferrer">rental-aggregator ↗</a></td>
+  <td class="cell-cat">🏠 房地產</td>
+  <td><span class="cell-mono">rental-aggregator</span></td>
+  <td class="cell-purpose">租屋平台整合 (Sean 開發)</td>
+  <td class="cell-pain">租屋資訊整合</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🏠 房地產" data-status="done">
+  <td class="cell-mono">2026-07-11</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/rental-house-aggregator" target="_blank" rel="noopener noreferrer">rental-house-aggregator ↗</a></td>
+  <td class="cell-cat">🏠 房地產</td>
+  <td><span class="cell-mono">rental-house-aggregator</span></td>
+  <td class="cell-purpose">AI SaaS 專案 — 第 6 輪 PRD 升級</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🏠 房地產" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/rental-matcher" target="_blank" rel="noopener noreferrer">rental-matcher ↗</a></td>
+  <td class="cell-cat">🏠 房地產</td>
+  <td><span class="cell-mono">rental-matcher</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — rental-matcher</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📊 財報" data-status="done">
+  <td class="cell-mono">2026-03-05</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/report-form" target="_blank" rel="noopener noreferrer">report-form ↗</a></td>
+  <td class="cell-cat">📊 財報</td>
+  <td><span class="cell-mono">report-form</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🍜 餐飲" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/restaurant-kiosk" target="_blank" rel="noopener noreferrer">restaurant-kiosk ↗</a></td>
+  <td class="cell-cat">🍜 餐飲</td>
+  <td><span class="cell-mono">restaurant-kiosk</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — restaurant-kiosk</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-08-26</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/rv-supply-map" target="_blank" rel="noopener noreferrer">rv-supply-map ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">rv-supply-map</span></td>
+  <td class="cell-purpose">露營車供水供電地圖 — Mobile01 車泊 + 蟬說車泊 + PlugShare 整合</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-08-23</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/shift-swap" target="_blank" rel="noopener noreferrer">shift-swap ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">shift-swap</span></td>
+  <td class="cell-purpose">M1 SaaS MVP — shift-swap</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/shift-swapper" target="_blank" rel="noopener noreferrer">shift-swapper ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">shift-swapper</span></td>
+  <td class="cell-purpose">各行業通用排班換班 SaaS · 純前端 MVP</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💬 社群" data-status="done">
+  <td class="cell-mono">2026-08-25</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/shop-quick-list" target="_blank" rel="noopener noreferrer">shop-quick-list ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">shop-quick-list</span></td>
+  <td class="cell-purpose">電商上架快手 — SaaS landing page with inline APP mockup of 上架工作台</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-04-09</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/sierra-enterprise-ai-agent" target="_blank" rel="noopener noreferrer">sierra-enterprise-ai-agent ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">sierra-enterprise-ai-agent</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/sign-sheet" target="_blank" rel="noopener noreferrer">sign-sheet ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">sign-sheet</span></td>
+  <td class="cell-purpose">簽單系統 (Sean 開發)</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-11</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/site-report-v2" target="_blank" rel="noopener noreferrer">site-report-v2 ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">site-report-v2</span></td>
+  <td class="cell-purpose">AI SaaS 專案 — 第 6 輪 PRD 升級</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🍜 餐飲" data-status="done">
+  <td class="cell-mono">2026-08-25</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/smart-dining" target="_blank" rel="noopener noreferrer">smart-dining ↗</a></td>
+  <td class="cell-cat">🍜 餐飲</td>
+  <td><span class="cell-mono">smart-dining</span></td>
+  <td class="cell-purpose">餐飲點餐快手 — Smart Dining Self-Ordering & Tracking System (KIOSK + Mobile PWA + Back</td>
+  <td class="cell-pain">即時進度透明化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💬 社群" data-status="done">
+  <td class="cell-mono">2026-05-18</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/social-cli-factory" target="_blank" rel="noopener noreferrer">social-cli-factory ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">social-cli-factory</span></td>
+  <td class="cell-purpose">LINE/FB/threads CLI Wrapper 工廠 — 讓中小企業能以指令自動化社群訊息發送</td>
+  <td class="cell-pain">重複作業自動化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📊 財報" data-status="done">
+  <td class="cell-mono">2026-03-05</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/staff-reporting-system" target="_blank" rel="noopener noreferrer">staff-reporting-system ↗</a></td>
+  <td class="cell-cat">📊 財報</td>
+  <td><span class="cell-mono">staff-reporting-system</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📊 財報" data-status="done">
+  <td class="cell-mono">2026-03-20</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/staff-reporting-system-v2" target="_blank" rel="noopener noreferrer">staff-reporting-system-v2 ↗</a></td>
+  <td class="cell-cat">📊 財報</td>
+  <td><span class="cell-mono">staff-reporting-system-v2</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📝 內容" data-status="done">
+  <td class="cell-mono">2026-03-03</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/sui-blog" target="_blank" rel="noopener noreferrer">sui-blog ↗</a></td>
+  <td class="cell-cat">📝 內容</td>
+  <td><span class="cell-mono">sui-blog</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-07-11</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/taiwan-meme-generator" target="_blank" rel="noopener noreferrer">taiwan-meme-generator ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">taiwan-meme-generator</span></td>
+  <td class="cell-purpose">AI SaaS 專案 — 第 7 輪 PRD 補 §15</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-03-03</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/text-to-speech-mvp" target="_blank" rel="noopener noreferrer">text-to-speech-mvp ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">text-to-speech-mvp</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💬 社群" data-status="done">
+  <td class="cell-mono">2026-08-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/threads-comment-helper" target="_blank" rel="noopener noreferrer">threads-comment-helper ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">threads-comment-helper</span></td>
+  <td class="cell-purpose">從 Threads 公開貼文留言中隨機抽出中獎者 · Comment Flow</td>
+  <td class="cell-pain">留言抽獎自動化</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-03-01</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/trade-backtest" target="_blank" rel="noopener noreferrer">trade-backtest ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">trade-backtest</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🎬 影音" data-status="done">
+  <td class="cell-mono">2026-07-08</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/tts-mvp" target="_blank" rel="noopener noreferrer">tts-mvp ↗</a></td>
+  <td class="cell-cat">🎬 影音</td>
+  <td><span class="cell-mono">tts-mvp</span></td>
+  <td class="cell-purpose">零成本文字轉語音 — Edge TTS 5+ 聲音、0.5x-2.0x 語速、MP3 下載、歷史記錄</td>
+  <td class="cell-pain">MVP 快速驗證</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💬 社群" data-status="done">
+  <td class="cell-mono">2026-07-10</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/tw-meme-generator" target="_blank" rel="noopener noreferrer">tw-meme-generator ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">tw-meme-generator</span></td>
+  <td class="cell-purpose">台灣專屬 LINE/FB 群組梗圖製造器 (Sean 開發)</td>
+  <td class="cell-pain">社群內容快速產出</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="💬 社群" data-status="done">
+  <td class="cell-mono">2026-08-30</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/video-download-manager" target="_blank" rel="noopener noreferrer">video-download-manager ↗</a></td>
+  <td class="cell-cat">💬 社群</td>
+  <td><span class="cell-mono">video-download-manager</span></td>
+  <td class="cell-purpose">Online video download manager for public videos from YouTube / Bilibili / Vimeo </td>
+  <td class="cell-pain">影音下載/轉檔</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📊 財報" data-status="done">
+  <td class="cell-mono">2026-03-31</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/wealth-dashboard" target="_blank" rel="noopener noreferrer">wealth-dashboard ↗</a></td>
+  <td class="cell-cat">📊 財報</td>
+  <td><span class="cell-mono">wealth-dashboard</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-05-06</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/Works" target="_blank" rel="noopener noreferrer">Works ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">Works</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="📦 其他" data-status="done">
+  <td class="cell-mono">2026-03-03</td>
+  <td class="cell-mono">2026-09-06</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/youtube-trending-collector" target="_blank" rel="noopener noreferrer">youtube-trending-collector ↗</a></td>
+  <td class="cell-cat">📦 其他</td>
+  <td><span class="cell-mono">youtube-trending-collector</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">— 待補 SPEC</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+<tr class="row-done" data-cat="🤖 AI" data-status="done">
+  <td class="cell-mono">2026-03-04</td>
+  <td class="cell-mono">2026-09-05</td>
+  <td><a class="cell-name" href="https://github.com/openclawsean024-create/ai-interview-assistant" target="_blank" rel="noopener noreferrer">ai-interview-assistant ↗</a></td>
+  <td class="cell-cat">🤖 AI</td>
+  <td><span class="cell-mono">ai-interview-assistant</span></td>
+  <td class="cell-purpose">—</td>
+  <td class="cell-pain">AI 降低生產門檻</td>
+  <td><span class="tag tag-done">✓ DONE</span></td>
+  <td class="prog-cell">
+    <div class="prog-row">
+      <div class="prog-mini"><div class="prog-mini-fill" style="width: 100%"></div></div>
+      <span class="prog-pct full">100%</span>
+    </div>
+  </td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+<footer class="ftr">
+  <div class="ftr-zh">拾 光 設 計  ／  T E N E T  S T U D I O  ·  食 刻 設 計 姊 妹 品 牌</div>
+  <div>EST · 2024 ／ PRINT-FEEL · 1970s ／ 印 章 ／ 燙 金 ／ 紅 印 泥 ／ 米 白 道 林 紙</div>
+  <div style="margin-top: 4px;">Generated by Mavis · MiniMax-M3 · <span id="now"></span> · v3.0.2 fleet sprint</div>
+</footer>
+
+</div>
+
+<script>
+const rows = document.querySelectorAll('#tbody tr');
+document.querySelectorAll('.fbtn[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const f = btn.dataset.filter;
+    document.querySelectorAll('.fbtn[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    rows.forEach(r => { r.style.display = (f === 'all' || r.dataset.cat === f) ? '' : 'none'; });
+  });
+});
+document.querySelectorAll('.fbtn[data-status]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const s = btn.dataset.status;
+    document.querySelectorAll('.fbtn[data-status]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    rows.forEach(r => { r.style.display = (s === 'all' || r.dataset.status === s) ? '' : 'none'; });
+  });
+});
+document.getElementById('now').textContent = new Date().toLocaleString('zh-TW', { hour12: false });
+setTimeout(() => location.reload(), 1000 * 60 * 30); // auto-reload every 30 min
+</script>
+</body>
+</html>
