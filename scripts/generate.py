@@ -121,13 +121,20 @@ def fetch_vercel_projects():
         if not name:
             continue
         targets = p.get("targets", {})
-        production_alias = p.get("production_alias") or p.get("alias", [{}])[0].get("domain") if isinstance(p.get("alias"), list) else None
+        # Try multiple sources for the production URL
+        production_alias = p.get("production_alias")
+        if not production_alias:
+            alias_field = p.get("alias")
+            if isinstance(alias_field, list) and alias_field:
+                production_alias = alias_field[0].get("domain") if isinstance(alias_field[0], dict) else alias_field[0]
+            elif isinstance(alias_field, str):
+                production_alias = alias_field
         # Best URL: production alias if set, else vercel.app default
         url = (production_alias or targets.get("production", {}).get("url") or
                f"https://{name}.vercel.app")
         # Latest deployment URL
-        latest_deploy = p.get("latestDeployments", [{}])[0] if p.get("latestDeployments") else {}
-        deploy_url = latest_deploy.get("url") if latest_deploy else None
+        latest_deploys = p.get("latestDeployments") or []
+        deploy_url = latest_deploys[0].get("url") if latest_deploys else None
         projects[name] = {
             "url": url if url.startswith("http") else f"https://{url}",
             "deploy_url": deploy_url,
