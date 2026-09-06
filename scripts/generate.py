@@ -19,6 +19,13 @@ HEADERS = {"Accept": "application/vnd.github+json", "User-Agent": "fleet-dashboa
 if TOKEN:
     HEADERS["Authorization"] = f"Bearer {TOKEN}"
 
+# Vercel integration
+VERCEL_TOKEN = os.environ.get("VERCEL_TOKEN")
+VERCEL_TEAM_ID = os.environ.get("VERCEL_TEAM_ID")
+VERCEL_HEADERS = {"Accept": "application/json", "User-Agent": "fleet-dashboard"}
+if VERCEL_TOKEN:
+    VERCEL_HEADERS["Authorization"] = f"Bearer {VERCEL_TOKEN}"
+
 OUT_FILE = "index.html"
 
 # ── Helpers ───────────────────────────────────────────────────────────────
@@ -66,6 +73,69 @@ def has_gha(user, repo):
     """Return True if repo has any workflow file under .github/workflows/."""
     data = gh_get(f"https://api.github.com/repos/{user}/{repo}/contents/.github/workflows")
     return data is not None and isinstance(data, list) and len(data) > 0
+
+
+# ── Vercel ─────────────────────────────────────────────────────────────────
+def vercel_get(path, params=None):
+    """Call Vercel REST API. Returns JSON or None."""
+    if not VERCEL_TOKEN:
+        return None
+    if params:
+        from urllib.parse import urlencode
+        url = f"https://api.vercel.com{path}?{urlencode(params)}"
+    else:
+        url = f"https://api.vercel.com{path}"
+    req = urllib.request.Request(url, headers=VERCEL_HEADERS)
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return None
+        print(f"  Vercel API {e.code} at {path}", file=sys.stderr)
+        return None
+    except Exception as e:
+        print(f"  Vercel error: {e}", file=sys.stderr)
+        return None
+
+
+def fetch_vercel_projects():
+    """Fetch all Vercel projects → {project_name: {url, deployment_url, targets, ...}}"""
+    if not VERCEL_TOKEN:
+        print("  VERCEL_TOKEN not set — skipping Vercel integration")
+        return {}
+
+    projects = {}
+    params = {"limit": 100}
+    if VERCEL_TEAM_ID:
+        params["teamId"] = VERCEL_TEAM_ID
+
+    print("  Fetching Vercel projects...")
+    data = vercel_get("/v10/projects", params)
+    if not data or "projects" not in data:
+        print("  No Vercel projects found or API error")
+        return {}
+
+    for p in data["projects"]:
+        name = p.get("name", "").lower()
+        if not name:
+            continue
+        targets = p.get("targets", {})
+        production_alias = p.get("production_alias") or p.get("alias", [{}])[0].get("domain") if isinstance(p.get("alias"), list) else None
+        # Best URL: production alias if set, else vercel.app default
+        url = (production_alias or targets.get("production", {}).get("url") or
+               f"https://{name}.vercel.app")
+        # Latest deployment URL
+        latest_deploy = p.get("latestDeployments", [{}])[0] if p.get("latestDeployments") else {}
+        deploy_url = latest_deploy.get("url") if latest_deploy else None
+        projects[name] = {
+            "url": url if url.startswith("http") else f"https://{url}",
+            "deploy_url": deploy_url,
+            "framework": p.get("framework", ""),
+        }
+
+    print(f"  Got {len(projects)} Vercel projects")
+    return projects
 
 
 # ── Categorization ────────────────────────────────────────────────────────
@@ -245,6 +315,20 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
 .tag-todo { background: var(--paper); color: var(--red); border-color: var(--red); }
 .tag-partial { background: var(--warn); color: var(--paper); border-color: var(--warn); }
 
+.deploy-cell { font-size: 11px; }
+.deploy-link {
+  display: inline-block; padding: 3px 8px;
+  border: 1.5px solid var(--ink); color: var(--ink);
+  text-decoration: none; font-family: "JetBrains Mono", monospace;
+  font-size: 10px; letter-spacing: 0.05em;
+  background: var(--paper);
+  transition: all 0.15s;
+}
+.deploy-link:hover { background: var(--ink); color: var(--paper); }
+.deploy-link.pages { border-color: var(--green); color: var(--green); }
+.deploy-link.pages:hover { background: var(--green); color: var(--paper); }
+.deploy-none { color: var(--ink); opacity: 0.3; font-family: "Special Elite", monospace; }
+
 .prog-cell { min-width: 110px; }
 .prog-row { display: flex; align-items: center; gap: 6px; }
 .prog-mini { flex: 1; height: 8px; border: 1.5px solid var(--line); background: var(--paper); position: relative; overflow: hidden; }
@@ -353,6 +437,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <th style="width: 200px;">專案名稱 / NAME</th>
   <th>用途</th>
   <th style="width: 150px;">解決痛點</th>
+  <th style="width: 110px;">LIVE / DEPLOY</th>
   <th style="width: 72px;">進度</th>
   <th style="width: 130px;">% 進度條</th>
 </tr>
@@ -408,6 +493,10 @@ def main():
 
     # Get current HEAD commit SHA for each (for status)
     # 85 = top active by ranking
+
+    # Fetch Vercel projects (if token available)
+    vercel_projects = fetch_vercel_projects()
+
     rows = []
     print("  Checking PRD/SPEC.md + GHA presence for each repo...")
     for i, r in enumerate(fleet, 1):
@@ -436,6 +525,7 @@ def main():
             "pain": extract_pain(name, r.get("description") or ""),
             "status": status,
             "pct": pct,
+            "vercel_url": vercel_projects.get(name.lower(), {}).get("url"),
         })
         if i % 10 == 0:
             print(f"    {i}/{len(fleet)}")
@@ -481,6 +571,16 @@ def main():
         else:
             pct_cls = "partial"
 
+        # Build deploy cell
+        vercel_url = d.get('vercel_url')
+        if vercel_url:
+            deploy_html = f'<a class="deploy-link" href="{vercel_url}" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a>'
+        elif d['has_pages']:
+            pages_url = f"https://{GH_USER}.github.io/{d['name']}/"
+            deploy_html = f'<a class="deploy-link pages" href="{pages_url}" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a>'
+        else:
+            deploy_html = '<span class="deploy-none">—</span>'
+
         rows_html += f'''<tr class="{row_class}" data-cat="{d['category']}" data-status="{d['status']}">
   <td class="cell-mono">{d['created_at']}</td>
   <td class="cell-mono">{d['updated_at']}</td>
@@ -489,6 +589,7 @@ def main():
   <td><span class="cell-mono">{d['name']}</span></td>
   <td class="cell-purpose">{d['purpose']}</td>
   <td class="cell-pain">{d['pain']}</td>
+  <td class="deploy-cell">{deploy_html}</td>
   <td><span class="tag {tag_class}">{tag_text}</span></td>
   <td class="prog-cell">
     <div class="prog-row">
