@@ -115,6 +115,20 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
 .tag-todo { background: var(--paper); color: var(--red); border-color: var(--red); }
 .tag-partial { background: var(--warn); color: var(--paper); border-color: var(--warn); }
 
+.deploy-cell { font-size: 11px; }
+.deploy-link {
+  display: inline-block; padding: 3px 8px;
+  border: 1.5px solid var(--ink); color: var(--ink);
+  text-decoration: none; font-family: "JetBrains Mono", monospace;
+  font-size: 10px; letter-spacing: 0.05em;
+  background: var(--paper);
+  transition: all 0.15s;
+}
+.deploy-link:hover { background: var(--ink); color: var(--paper); }
+.deploy-link.pages { border-color: var(--green); color: var(--green); }
+.deploy-link.pages:hover { background: var(--green); color: var(--paper); }
+.deploy-none { color: var(--ink); opacity: 0.3; font-family: "Special Elite", monospace; }
+
 .prog-cell { min-width: 110px; }
 .prog-row { display: flex; align-items: center; gap: 6px; }
 .prog-mini { flex: 1; height: 8px; border: 1.5px solid var(--line); background: var(--paper); position: relative; overflow: hidden; }
@@ -145,7 +159,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   </div>
   <div class="hdr-meta">
     <span>EST · <strong>2024</strong></span>
-    <span>GENERATED · <strong>2026-09-06 23:49</strong></span>
+    <span>GENERATED · <strong>2026-09-07 00:00</strong></span>
     <span>SCOPE · <strong>86 REPOS</strong></span>
     <span>RUN · <strong>Mavis · MiniMax-M3</strong></span>
     <span>NEXT REFRESH · <strong>HOURLY + MANUAL</strong></span>
@@ -238,6 +252,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <th style="width: 200px;">專案名稱 / NAME</th>
   <th>用途</th>
   <th style="width: 150px;">解決痛點</th>
+  <th style="width: 110px;">LIVE / DEPLOY</th>
   <th style="width: 72px;">進度</th>
   <th style="width: 130px;">% 進度條</th>
 </tr>
@@ -251,6 +266,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">fleet-dashboard</span></td>
   <td class="cell-purpose">GitHub Fleet Dashboard · 85 repos v3.0.2 進度總覽 · 拾光設計</td>
   <td class="cell-pain">收銀/庫存數位化</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/fleet-dashboard/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-partial">◐ PARTIAL</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -267,6 +283,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">life-protocol</span></td>
   <td class="cell-purpose">Life Protocol 實踐應用 - AI 驅動的人生策略系統</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-partial">◐ PARTIAL</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -283,6 +300,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">beauty-crm-concierge</span></td>
   <td class="cell-purpose">美業回訪管家 (BeautyFollow Concierge) — 高端美業客戶關懷 CRM。每次回訪都像被專屬照顧。</td>
   <td class="cell-pain">客戶關懷自動化</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://beauty-crm-concierge-8d1pi6bv3-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-todo">⋯ IN FLIGHT</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -299,6 +317,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">comment-flow-yt</span></td>
   <td class="cell-purpose">YouTube 留言抽籤小助手 — 純前端、無登入、可重現結果</td>
   <td class="cell-pain">零成本/無痛起步</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://comment-flow-cmzbo0i0m-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-todo">⋯ IN FLIGHT</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -315,6 +334,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">lms-train</span></td>
   <td class="cell-purpose">線上教育訓練系統 — 影片 + 考題 + 統計。非會員可用 MVP。</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://lms-train-cfmbkmhd4-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-partial">◐ PARTIAL</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -331,6 +351,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">news-rap-automation</span></td>
   <td class="cell-purpose">新聞 → Rap 自動化 v2.0 — 純前端 Boom Bap</td>
   <td class="cell-pain">重複作業自動化</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://news-rap-automation-68ra4ps8c-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-partial">◐ PARTIAL</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -347,6 +368,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">social-comment-auto-reply</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">留言抽獎自動化</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://social-comment-auto-reply-ofqrivcm9-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-partial">◐ PARTIAL</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -363,6 +385,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">social-comment-v2</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">留言抽獎自動化</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-todo">⋯ IN FLIGHT</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -379,6 +402,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ugc-video-generator</span></td>
   <td class="cell-purpose">UGC 影片生成器 v2.0 — 純前端、零 API Key 的 AI 主播短影片生成器</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://ugc-video-generator-r24ji6isl-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-todo">⋯ IN FLIGHT</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -395,6 +419,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ai-employee-outsourcing</span></td>
   <td class="cell-purpose">AI 員工外包平台 - 把重複性工作自動化為 AI Agent 服務</td>
   <td class="cell-pain">重複作業自動化</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://ai-employee-outsourcing-8so8d31bx-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -411,6 +436,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ai-landing-specialist</span></td>
   <td class="cell-purpose">AI 落地師 (AI Partner) — 為台灣中小企業導入 AI 自動化的官方網站。靜態 HTML/CSS/JS,部署於 Vercel。</td>
   <td class="cell-pain">重複作業自動化</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://ai-landing-specialist-5sc49m1t4-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -427,6 +453,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ai-team-intro</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://ai-team-intro-j4mxm0ato-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -443,6 +470,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">allfi-asset-manager</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://allfi-asset-manager-l5rqo8nsu-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -459,6 +487,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">anime-character-analyzer</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/anime-character-analyzer/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -475,6 +504,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">astrology-analyzer</span></td>
   <td class="cell-purpose">AI SaaS 專案 — 第 6 輪 PRD 升級</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -491,6 +521,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">beauty-crm</span></td>
   <td class="cell-purpose">美業客戶長期管理 (Sean 開發)</td>
   <td class="cell-pain">資料集中管理</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://beauty-p7qy9ggz7-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -507,6 +538,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">business-card-manager</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">名片交換數位化</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/business-card-manager/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -523,6 +555,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">business-card-pro</span></td>
   <td class="cell-purpose">名片王 Pro — AI 名片管理 SaaS（Next.js 16 + Prisma + Auth.js v5 + Tesseract.js OCR）</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://business-card-qfzxm2tlg-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -539,6 +572,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">claude-code-enterprise-training</span></td>
   <td class="cell-purpose">中文 Claude Code 企業內訓 - Next.js Landing Page</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://claude-code-enterprise-training-n8nl58shg.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -555,6 +589,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">claude-code-training</span></td>
   <td class="cell-purpose">AI SaaS 專案 — 第 7 輪 PRD 補 §15</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://claude-code-training-jk9uh4ibp-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -571,6 +606,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">clinic-booking</span></td>
   <td class="cell-purpose">M1 SaaS MVP — clinic-booking</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/clinic-booking/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -587,6 +623,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">comment-flow-web</span></td>
   <td class="cell-purpose">Comment Flow — 純前端版 (FB JS SDK + GitHub Pages)</td>
   <td class="cell-pain">留言抽獎自動化</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/comment-flow-web/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -603,6 +640,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">contract-reviewer</span></td>
   <td class="cell-purpose">M1 SaaS MVP — contract-reviewer</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/contract-reviewer/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -619,6 +657,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">contract-tracker</span></td>
   <td class="cell-purpose">合約狀況 + 審核法條 (Sean 開發)</td>
   <td class="cell-pain">合約審閱效率化</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://contract-tracker-mx7qnmm2e-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -635,6 +674,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">decoration-tracker</span></td>
   <td class="cell-purpose">M1 SaaS MVP — decoration-tracker</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://decoration-tracker-qf6qmewlp-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -651,6 +691,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">digital-nomad-cafe-map</span></td>
   <td class="cell-purpose">Project digital-nomad-cafe-map</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://digital-nomad-cafe-pluv4j6mg-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -667,6 +708,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ebook-audio</span></td>
   <td class="cell-purpose">AI SaaS 專案 — 第 7 輪 PRD 補 §15</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -683,6 +725,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ebook-to-audiobook</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/ebook-to-audiobook/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -699,6 +742,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ecom-list</span></td>
   <td class="cell-purpose">電商多平台快速上架 (Sean 開發)</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://ecom-list-qdnvyjnmm-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -715,6 +759,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ecom-uploader</span></td>
   <td class="cell-purpose">M1 SaaS MVP — ecom-uploader</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/ecom-uploader/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -731,6 +776,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">elderly-care-companion</span></td>
   <td class="cell-purpose">M1 SaaS MVP — elderly-care-companion</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/elderly-care-companion/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -747,6 +793,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">emed-glp1</span></td>
   <td class="cell-purpose">Project emed-glp1</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -763,6 +810,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">eternal-article</span></td>
   <td class="cell-purpose">貼一篇文章,把它永久寫進區塊鏈。支援 Sui+Walrus / Arweave / Base+IPFS。</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://eternal-article-chhpelqzm-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -779,6 +827,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">facebook-comment-picker</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">留言抽獎自動化</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/facebook-comment-picker/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -795,6 +844,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">fate-match</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://fate-match-bis78kkl2-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -811,6 +861,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">finance-radar</span></td>
   <td class="cell-purpose">M1 SaaS MVP — finance-radar</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/finance-radar/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -827,6 +878,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">finance-tracker</span></td>
   <td class="cell-purpose">公司財務報表 + 流動資產 (Sean 開發)</td>
   <td class="cell-pain">財務報表視覺化</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://finance-tracker-nclc3ybca-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -843,6 +895,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">fortune-telling</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">個人化命理諮詢</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://fortune-telling-h1shlvycb-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -859,6 +912,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">grow-therapy</span></td>
   <td class="cell-purpose">Project grow-therapy</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -875,6 +929,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">hermes-publisher</span></td>
   <td class="cell-purpose">從 Claude Code / Codex / Hermes 一鍵把 SKILL.md 上架到 Capafy 販售。含 4 個 CLI 指令: check / </td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -891,6 +946,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">Hermes_setting_20260718</span></td>
   <td class="cell-purpose">Hermes Agent 完整設定文件 + SOP + 32 個關鍵 skill + shell scripts (備份於 2026-07-18)</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -907,6 +963,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">horoscope</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -923,6 +980,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">hotel-pm</span></td>
   <td class="cell-purpose">飯店 / 包租代管物業管理系統 — 純前端 SPA</td>
   <td class="cell-pain">資料集中管理</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://hotel-ckasxlq22-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -939,6 +997,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">hotel-pm-pro</span></td>
   <td class="cell-purpose">hotel-pm commercial version</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://hotel-pm-f2egny584-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -955,6 +1014,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">insurance-claims</span></td>
   <td class="cell-purpose">M1 SaaS MVP — insurance-claims</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/insurance-claims/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -971,6 +1031,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">insurance-hub</span></td>
   <td class="cell-purpose">保單資料集中管理 + 各家條款對比 + 理賠 SOP 透明化 + 台灣保險地圖</td>
   <td class="cell-pain">資料集中管理</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://insurance-d2y79utwv-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -987,6 +1048,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">learning-radar</span></td>
   <td class="cell-purpose">M1 SaaS MVP — learning-radar</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/learning-radar/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1003,6 +1065,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">meeting-recorder</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://meeting-recorder-cuaeaigpa-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1019,6 +1082,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">numerology-analyzer</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1035,6 +1099,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">openclaw-minimax-skills</span></td>
   <td class="cell-purpose">OpenClaw 一人公司 skill 集 — 給 MiniMax Agent 安裝並依此開發 SaaS / 網站</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1051,6 +1116,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">openptt</span></td>
   <td class="cell-purpose">OpenPTT — 全平台 PTT 看板瀏覽器 (BePTT 100% Clone, Web + iOS + Android)</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/openptt/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1067,6 +1133,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">order-tracker</span></td>
   <td class="cell-purpose">M1 SaaS MVP — order-tracker</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/order-tracker/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1083,6 +1150,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">parcel-tracker</span></td>
   <td class="cell-purpose">M1 SaaS MVP — parcel-tracker</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/parcel-tracker/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1099,6 +1167,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">pos-multitrade</span></td>
   <td class="cell-purpose">POS 系統（行業切換）— 純前端 SPA，支援餐飲/零售/服務三種行業模板，localStorage 持久化，零月費。</td>
   <td class="cell-pain">收銀/庫存數位化</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://pos-multitrade-8col7p6id-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1115,6 +1184,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">pos-system</span></td>
   <td class="cell-purpose">POS 收銀管理系統 MVP - 全通路零售一站搞定</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://pos-system-d3kriwk3m-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1131,6 +1201,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ptt-alertor</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://ptt-alertor-n5la79vnk-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1147,6 +1218,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ptt-tracker</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://ptt-tracker-j2g0xlhzi-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1163,6 +1235,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">remove-bg</span></td>
   <td class="cell-purpose">AI 自動去背服務 — 台灣最便宜的 AI 去背 SaaS</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://remove-3iakln9n2-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1179,6 +1252,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">rental-aggregator</span></td>
   <td class="cell-purpose">租屋平台整合 (Sean 開發)</td>
   <td class="cell-pain">租屋資訊整合</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://rental-aggregator-4t9vmovkm-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1195,6 +1269,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">rental-house-aggregator</span></td>
   <td class="cell-purpose">AI SaaS 專案 — 第 6 輪 PRD 升級</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1211,6 +1286,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">rental-matcher</span></td>
   <td class="cell-purpose">M1 SaaS MVP — rental-matcher</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/rental-matcher/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1227,6 +1303,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">report-form</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://report-form-hebpnx0nu-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1243,6 +1320,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">restaurant-kiosk</span></td>
   <td class="cell-purpose">M1 SaaS MVP — restaurant-kiosk</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/restaurant-kiosk/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1259,6 +1337,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">rv-supply-map</span></td>
   <td class="cell-purpose">露營車供水供電地圖 — Mobile01 車泊 + 蟬說車泊 + PlugShare 整合</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/rv-supply-map/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1275,6 +1354,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">shift-swap</span></td>
   <td class="cell-purpose">M1 SaaS MVP — shift-swap</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/shift-swap/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1291,6 +1371,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">shift-swapper</span></td>
   <td class="cell-purpose">各行業通用排班換班 SaaS · 純前端 MVP</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://shift-swapper-8iwabqhwi-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1307,6 +1388,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">shop-quick-list</span></td>
   <td class="cell-purpose">電商上架快手 — SaaS landing page with inline APP mockup of 上架工作台</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1323,6 +1405,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">sierra-enterprise-ai-agent</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://sierra-enterprise-ai-agent-1zo7jkxgz-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1339,6 +1422,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">sign-sheet</span></td>
   <td class="cell-purpose">簽單系統 (Sean 開發)</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://sign-sheet-3ergznsd4-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1355,6 +1439,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">site-report-v2</span></td>
   <td class="cell-purpose">AI SaaS 專案 — 第 6 輪 PRD 升級</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1371,6 +1456,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">smart-dining</span></td>
   <td class="cell-purpose">餐飲點餐快手 — Smart Dining Self-Ordering & Tracking System (KIOSK + Mobile PWA + Back</td>
   <td class="cell-pain">即時進度透明化</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1387,6 +1473,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">social-cli-factory</span></td>
   <td class="cell-purpose">LINE/FB/threads CLI Wrapper 工廠 — 讓中小企業能以指令自動化社群訊息發送</td>
   <td class="cell-pain">重複作業自動化</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1403,6 +1490,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">staff-reporting-system</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/staff-reporting-system/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1419,6 +1507,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">staff-reporting-system-v2</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/staff-reporting-system-v2/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1435,6 +1524,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">sui-blog</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/sui-blog/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1451,6 +1541,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">taiwan-meme-generator</span></td>
   <td class="cell-purpose">AI SaaS 專案 — 第 7 輪 PRD 補 §15</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1467,6 +1558,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">text-to-speech-mvp</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/text-to-speech-mvp/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1483,6 +1575,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">threads-comment-helper</span></td>
   <td class="cell-purpose">從 Threads 公開貼文留言中隨機抽出中獎者 · Comment Flow</td>
   <td class="cell-pain">留言抽獎自動化</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://threads-comment-helper-91gutowal-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1499,6 +1592,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">trade-backtest</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1515,6 +1609,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">tts-mvp</span></td>
   <td class="cell-purpose">零成本文字轉語音 — Edge TTS 5+ 聲音、0.5x-2.0x 語速、MP3 下載、歷史記錄</td>
   <td class="cell-pain">MVP 快速驗證</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1531,6 +1626,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">tw-meme-generator</span></td>
   <td class="cell-purpose">台灣專屬 LINE/FB 群組梗圖製造器 (Sean 開發)</td>
   <td class="cell-pain">社群內容快速產出</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://tw-meme-generator-2ta6odene-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1547,6 +1643,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">video-download-manager</span></td>
   <td class="cell-purpose">Online video download manager for public videos from YouTube / Bilibili / Vimeo </td>
   <td class="cell-pain">影音下載/轉檔</td>
+  <td class="deploy-cell"><span class="deploy-none">—</span></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1563,6 +1660,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">wealth-dashboard</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://wealth-dashboard-riuch8drw-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1579,6 +1677,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">Works</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/Works/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1595,6 +1694,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">youtube-trending-collector</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">— 待補 SPEC</td>
+  <td class="deploy-cell"><a class="deploy-link pages" href="https://openclawsean024-create.github.io/youtube-trending-collector/" target="_blank" rel="noopener noreferrer">▤ Pages ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
@@ -1611,6 +1711,7 @@ tr.row-todo td { background: rgba(184,50,50,0.04); }
   <td><span class="cell-mono">ai-interview-assistant</span></td>
   <td class="cell-purpose">—</td>
   <td class="cell-pain">AI 降低生產門檻</td>
+  <td class="deploy-cell"><a class="deploy-link" href="https://ai-interview-assistant-87x0i7hzj-seans-projects-7dc76219.vercel.app" target="_blank" rel="noopener noreferrer">▲ Vercel ↗</a></td>
   <td><span class="tag tag-done">✓ DONE</span></td>
   <td class="prog-cell">
     <div class="prog-row">
