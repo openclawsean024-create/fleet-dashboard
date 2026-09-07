@@ -46,13 +46,15 @@ jobs:
         run: |
           git config user.name "Mavis · fleet-bot"
           git config user.email "fleet-bot@users.noreply.github.com"
+          # Always pull --rebase to absorb any concurrent commits (e.g. Pages auto-rebuild)
+          git pull --rebase --autostash origin main || true
           if git diff --quiet index.html; then
             echo "No changes — skipping commit"
           else
             git add index.html
             TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
             git commit -m "chore(dashboard): regenerate index.html [$TS]"
-            git push
+            git push origin main
             echo "✅ Pushed update at $TS"
           fi
 
